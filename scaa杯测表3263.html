@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCA咖啡杯测评估表</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5e9d4, #d7c8a9);
+            color: #4a3c30;
+            padding: 15px;
+            min-height: 100vh;
+            padding-bottom: 120px;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: linear-gradient(to right, #8b5a2b, #6b4424);
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            color: #f5e9d4;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .samples-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .sample-card {
+            background: rgba(255, 253, 248, 0.95);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(93, 65, 45, 0.15);
+            border: 1px solid #e0d1b8;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .sample-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(93, 65, 45, 0.25);
+        }
+        
+        .sample-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0d1b8;
+        }
+        
+        .sample-id-display {
+            margin: 0;
+            font-weight: 700;
+            color: #8b5a2b;
+            padding: 8px 15px;
+            background: rgba(139, 90, 43, 0.1);
+            border-radius: 8px;
+            display: inline-block;
+            font-size: 1.2rem;
+        }
+        
+        .delete-sample-btn {
+            background: #c44e34;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 15px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .delete-sample-btn:hover {
+            background: #d55f45;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(196, 78, 52, 0.3);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #d7c8a9;
+        }
+        
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #5d412d;
+            font-size: 1rem;
+        }
+        
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #5d412d;
+            min-width: 100px;
+        }
+        
+        input[type="text"], input[type="date"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #d7c8a9;
+            border-radius: 8px;
+            background: #fffdf8;
+            font-size: 0.95rem;
+            color: #5d412d;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #8b5a2b;
+        }
+        
+        .slider-container {
+            position: relative;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(245, 233, 212, 0.3);
+            border-radius: 8px;
+        }
+        
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .slider-title {
+            font-weight: 600;
+            color: #5d412d;
+            font-size: 1.1rem;
+        }
+        
+        .score-display {
+            font-weight: bold;
+            color: #8b5a2b;
+            font-size: 1.2rem;
+            min-width: 35px;
+            text-align: center;
+        }
+        
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #7d6852;
+            margin-top: 6px;
+        }
+        
+        .custom-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 18px;
+            border-radius: 9px;
+            background: linear-gradient(to right, #e0c9a6, #8b5a2b);
+            outline: none;
+        }
+        
+        .custom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #fff;
+            border: 3px solid #8b5a2b;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .custom-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+        }
+        
+        .defect-slider {
+            background: linear-gradient(to left, #f5e9d4, #e27d60);
+            direction: rtl;
+        }
+        
+        .defect-slider::-webkit-slider-thumb {
+            border: 3px solid #c44e34;
+        }
+        
+        .flavor-label {
+            font-weight: 700;
+            margin: 15px 0 10px;
+            color: #5d412d;
+            font-size: 1.1rem;
+            padding-left: 8px;
+            border-left: 4px solid #b89f7d;
+        }
+        
+        .flavor-section {
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(245, 233, 212, 0.3);
+            border-radius: 8px;
+        }
+        
+        .flavor-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 10px;
+            line-height: 1.8;
+        }
+        
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+            white-space: nowrap;
+            padding: 3px 0;
+        }
+        
+        .checkbox-container input[type="checkbox"] {
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border: 2px solid #b89f7d;
+            border-radius: 4px;
+            margin-right: 8px;
+            position: relative;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        
+        .checkbox-container input[type="checkbox"]:hover {
+            border-color: #8b5a2b;
+        }
+        
+        .checkbox-container input[type="checkbox"]:checked {
+            background: rgba(139, 90, 43, 0.1);
+            border-color: #8b5a2b;
+        }
+        
+        .checkbox-container input[type="checkbox"]:checked::before {
+            content: "✓";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #8b5a2b;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            color: #8b5a2b;
+            margin: 20px 0 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e0d1b8;
+            font-weight: 700;
+        }
+        
+        .coffee-summary {
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(245, 233, 212, 0.4);
+            border-radius: 10px;
+            border-left: 4px solid #8b5a2b;
+            position: relative;
+        }
+        
+        .total-display {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, #8b5a2b, #6b4424);
+            color: white;
+            font-size: 2.5rem;
+            font-weight: bold;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 25px rgba(93, 65, 45, 0.6);
+            z-index: 100;
+            border: 4px solid #fff;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+        
+        .total-label {
+            position: absolute;
+            bottom: -28px;
+            font-size: 1rem;
+            color: #5d412d;
+            font-weight: 700;
+            text-shadow: 0 1px 1px rgba(255,255,255,0.5);
+            width: 100%;
+            text-align: center;
+        }
+        
+        .summary-title {
+            font-size: 1.3rem;
+            color: #8b5a2b;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+        
+        .summary-text {
+            color: #5d412d;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border: 1px solid #e0d1b8;
+        }
+        
+        .chart-container {
+            height: 500px;
+            margin-top: 15px;
+            width: 100%;
+        }
+        
+        .evaluation-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 253, 248, 0.8);
+            border-radius: 8px;
+            border: 1px solid #e0d1b8;
+        }
+        
+        .evaluation-box textarea {
+            width: 100%;
+            height: 120px;
+            padding: 12px;
+            border: 2px solid #d7c8a9;
+            border-radius: 8px;
+            background: #fffdf8;
+            font-size: 0.95rem;
+            color: #5d412d;
+            resize: vertical;
+            margin-top: 10px;
+        }
+        
+        .evaluation-box textarea:focus {
+            outline: none;
+            border-color: #8b5a2b;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .btn {
+            flex: 1;
+            min-width: 140px;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, #8b5a2b, #6b4424);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(to right, #9c6b3c, #7b5535);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(139, 90, 43, 0.4);
+        }
+        
+        .coffee-icon {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            opacity: 0.1;
+            font-size: 3.5rem;
+            color: #f5e9d4;
+        }
+        
+        .disabled-option {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        .compact-section {
+            margin-top: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .compact-row {
+            margin-bottom: 8px;
+        }
+        
+        .summary-title-with-sample {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .sample-number-badge {
+            background: #8b5a2b;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .toast.show {
+            opacity: 1;
+        }
+        
+        .samples-container {
+            width: 100%;
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        
+        .chart-title {
+            font-size: 1.4rem;
+            color: #8b5a2b;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #e0d1b8;
+            text-align: left;
+            font-weight: 700;
+            padding-left: 10px;
+        }
+        
+        .cupping-conclusion {
+            background: rgba(245, 233, 212, 0.5);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .quality-indicator {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: 600;
+        }
+        
+        .excellent { background: #4CAF50; color: white; }
+        .good { background: #8BC34A; color: white; }
+        .average { background: #FFC107; color: #333; }
+        .poor { background: #FF9800; color: white; }
+        .bad { background: #F44336; color: white; }
+        
+        @media (max-width: 768px) {
+            .input-row {
+                flex-direction: column;
+            }
+            
+            .input-row > div {
+                width: 100%;
+            }
+            
+            .flavor-row {
+                gap: 5px;
+            }
+            
+            .btn {
+                min-width: 100%;
+                margin-bottom: 10px;
+            }
+            
+            .total-display {
+                width: 85px;
+                height: 85px;
+                font-size: 1.8rem;
+            }
+            
+            .info-row {
+                flex-wrap: wrap;
+            }
+            
+            .sample-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .delete-sample-btn {
+                align-self: flex-end;
+                margin-top: 10px;
+            }
+            
+            .chart-container {
+                height: 350px;
+            }
+            
+            .chart-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .checkbox-container {
+                margin-right: 8px;
+            }
+            
+            .total-display {
+                width: 75px;
+                height: 75px;
+                font-size: 1.6rem;
+                top: 10px;
+                right: 10px;
+            }
+            
+            .btn {
+                padding: 12px;
+            }
+            
+            .chart-container {
+                height: 280px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SCA 咖啡杯测评估表</h1>
+            <div class="subtitle">专业咖啡品质评估工具</div>
+            <div class="coffee-icon">
+                <i class="fas fa-coffee"></i>
+            </div>
+        </header>
+        
+        <div class="samples-container" id="samplesContainer">
+            <!-- 样品1 -->
+            <div class="sample-card" id="sample-1">
+                <div class="sample-header">
+                    <div class="sample-id-display">样品 #1</div>
+                    <button class="delete-sample-btn" data-sample="1">
+                        <i class="fas fa-trash-alt"></i> 删除样品
+                    </button>
+                </div>
+                
+                <div class="form-group">
+                    <div class="info-row">
+                        <div class="info-label">品测师姓名:</div>
+                        <input type="text" id="tasterName1" placeholder="请输入姓名" style="flex: 1;">
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">测试日期:</div>
+                        <input type="date" id="testDate1" style="flex: 1;">
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">样品编号:</div>
+                        <input type="text" id="sampleId1" placeholder="输入样品编号" style="flex: 1;">
+                    </div>
+                </div>
+                
+                <div class="slider-container compact-section">
+                    <div class="slider-header">
+                        <span class="slider-title">干香（强度）</span>
+                        <span class="score-display" id="dryAromaScore1">5</span>
+                    </div>
+                    <div class="slider-wrapper">
+                        <input type="range" min="0" max="10" value="5" class="custom-slider" id="dryAroma1">
+                    </div>
+                    <div class="slider-labels">
+                        <span>弱</span>
+                        <span>中等</span>
+                        <span>强</span>
+                    </div>
+                </div>
+                
+                <div class="slider-container compact-section">
+                    <div class="slider-header">
+                        <span class="slider-title">湿香（强度）</span>
+                        <span class="score-display" id="wetAromaScore1">5</span>
+                    </div>
+                    <div class="slider-wrapper">
+                        <input type="range" min="0" max="10" value="5" class="custom-slider" id="wetAroma1">
+                    </div>
+                    <div class="slider-labels">
+                        <span>弱</span>
+                        <span>中等</span>
+                        <span>强</span>
+                    </div>
+                </div>
+                
+                <div class="flavor-label">以下最多选择五项样品</div>
+                
+                <div class="flavor-section flavor-section-1 compact-section">
+                    <div class="flavor-row top-level-option compact-row">
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="floral1" class="top-option flavor-option-1">
+                            <label for="floral1">花香</label>
+                        </div>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="roasty1" class="top-option flavor-option-1">
+                            <label for="roasty1">烘焙味</label>
+                        </div>
+                    </div>
+                    
+                    <div class="flavor-row top-level-option compact-row">
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="fruity1" class="top-option flavor-option-1">
+                            <label for="fruity1">果味</label>
+                        </div>
+                        <span>(</span>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="berry1" class="flavor-option-1 sub-option" data-parent="fruity1">
+                            <label for="berry1">莓果类</label>
+                        </div>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="driedFruit1" class="flavor-option-1 sub-option" data-parent="fruity1">
+                            <label for="driedFruit1">果干</label>
+                        </div>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="citrus1" class="flavor-option-1 sub-option" data-parent="fruity1">
+                            <label for="citrus1">柑橘类</label>
+                        </div>
+                        <span>)</span>
+                    </div>
+                    
+                    <div class="flavor-row top-level-option compact-row">
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="nutty1" class="top-option flavor-option-1">
+                            <label for="nutty1">坚果类I可可</label>
+                        </div>
+                        <span>(</span>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="cocoaNutty1" class="flavor-option-1 sub-option" data-parent="nutty1">
+                            <label for="cocoaNutty1">坚果</label>
+                        </div>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="cocoaChoco1" class="flavor-option-1 sub-option" data-parent="nutty1">
+                            <label for="cocoaChoco1">可可</label>
+                        </div>
+                        <span>)</span>
+                    </div>
+                    
+                    <div class="flavor-row top-level-option compact-row">
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="sour1" class="top-option flavor-option-1">
+                            <label for="sour1">酸味|发酵味</label>
+                        </div>
+                        <span>(</span>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="sourAcid1" class="flavor-option-1 sub-option" data-parent="sour1">
+                            <label for="sourAcid1">酸味</label>
+                        </div>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="sourFerment1" class="flavor-option-1 sub-option" data-parent="sour1">
+                            <label for="sourFerment1">发酵味</label>
+                        </div>
+                        <span>)</span>
+                    </div>
+                    
+                    <div class="flavor-row top-level-option compact-row">
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="spicy1" class="top-option flavor-option-1">
+                            <label for="spicy1">香料味</label>
+                        </div>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="vegetal1" class="top-option flavor-option-1">
+                            <label for="vegetal1">植蔬味</label>
+                        </div>
+                    </div>
+                    
+                    <div class="flavor-row top-level-option compact-row">
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="sweet1" class="top-option flavor-option-1">
+                            <label for="sweet1">甜味</label>
+                        </div>
+                        <span>(</span>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="sweetVanilla1" class="flavor-option-1 sub-option" data-parent="sweet1">
+                            <label for="sweetVanilla1">香草I香兰素</label>
+                        </div>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="sweetBrownSugar1" class="flavor-option-1 sub-option" data-parent="sweet1">
+                            <label for="sweetBrownSugar1">黄糖</label>
+                        </div>
+                        <span>)</span>
+                    </div>
+                    
+                    <div class="flavor-row top-level-option compact-row">
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="other1" class="top-option flavor-option-1">
+                            <label for="other1">其他味道</label>
+                        </div>
+                        <span>(</span>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="chem1" class="flavor-option-1 sub-option" data-parent="other1">
+                            <label for="chem1">化学味道</label>
+                        </div>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="moldy1" class="flavor-option-1 sub-option" data-parent="other1">
+                            <label for="moldy1">霉味</label>
+                        </div>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="earthy1" class="flavor-option-1 sub-option" data-parent="other1">
+                            <label for="earthy1">泥土味道</label>
+                        </div>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="papery1" class="flavor-option-1 sub-option" data-parent="other1">
+                            <label for="papery1">纸张味道</label>
+                        </div>
+                        <span>)</span>
+                    </div>
+                </div>
+                
+                <div class="section-title">风味（强度）</div>
+                
+                <div class="slider-container compact-section">
+                    <div class="slider-header">
+                        <span class="slider-title">风味（强度）</span>
+                        <span class="score-display" id="flavorScore1">5</span>
+                    </div>
+                    <div class="slider-wrapper">
+                        <input type="range" min="0" max="10" value="5" class="custom-slider" id="flavor1">
+                    </div>
+                    <div class="slider-labels">
+                        <span>弱</span>
+                        <span>中等</span>
+                        <span>强</span>
+                    </div>
+                </div>
+                
+                <div class="slider-container compact-section">
+                    <div class="slider-header">
+                        <span class="slider-title">余韵（强度）</span>
+                        <span class="score-display" id="aftertasteScore1">5</span>
+                    </div>
+                    <div class="slider-wrapper">
+                        <input type="range" min="0" max="10" value="5" class="custom-slider" id="aftertaste1">
+                    </div>
+                    <div class="slider-labels">
+                        <span>弱</span>
+                        <span>中等</span>
+                        <span>强</span>
+                    </div>
+                </div>
+                
+                <div class="flavor-label">以下最多选择五项样品</div>
+                
+                <div class="flavor-section flavor-section-1-after compact-section">
+                    <div class="flavor-row top-level-option compact-row">
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="afterFloral1" class="top-option flavor-option-1-after">
+                            <label for="afterFloral1">花香</label>
+                        </div>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="afterRoasty1" class="top-option flavor-option-1-after">
+                            <label for="afterRoasty1">烘焙味</label>
+                        </div>
+                    </div>
+                    
+                    <div class="flavor-row top-level-option compact-row">
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="afterFruity1" class="top-option flavor-option-1-after">
+                            <label for="afterFruity1">果味</label>
+                        </div>
+                        <span>(</span>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="afterBerry1" class="flavor-option-1-after sub-option" data-parent="afterFruity1">
+                            <label for="afterBerry1">莓果类</label>
+                        </div>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="afterDriedFruit1" class="flavor-option-1-after sub-option" data-parent="afterFruity1">
+                            <label for="afterDriedFruit1">果干</label>
+                        </div>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="afterCitrus1" class="flavor-option-1-after sub-option" data-parent="afterFruity1">
+                            <label for="afterCitrus1">柑橘类</label>
+                        </div>
+                        <span>)</span>
+                    </div>
+                    
+                    <div class="flavor-row top-level-option compact-row">
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="afterNutty1" class="top-option flavor-option-1-after">
+                            <label for="afterNutty1">坚果类I可可</label>
+                        </div>
+                        <span>(</span>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="afterCocoaNutty1" class="flavor-option-1-after sub-option" data-parent="afterNutty1">
+                            <label for="afterCocoaNutty1">坚果</label>
+                        </div>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="afterCocoaChoco1" class="flavor-option-1-after sub-option" data-parent="afterNutty1">
+                            <label for="afterCocoaChoco1">可可</label>
+                        </div>
+                        <span>)</span>
+                    </div>
+                    
+                    <div class="flavor-row top-level-option compact-row">
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="afterSour1" class="top-option flavor-option-1-after">
+                            <label for="afterSour1">酸味|发酵味</label>
+                        </div>
+                        <span>(</span>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="afterSourAcid1" class="flavor-option-1-after sub-option" data-parent="afterSour1">
+                            <label for="afterSourAcid1">酸味</label>
+                        </div>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="afterSourFerment1" class="flavor-option-1-after sub-option" data-parent="afterSour1">
+                            <label for="afterSourFerment1">发酵味</label>
+                        </div>
+                        <span>)</span>
+                    </div>
+                    
+                    <div class="flavor-row top-level-option compact-row">
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="afterSpicy1" class="top-option flavor-option-1-after">
+                            <label for="afterSpicy1">香料味</label>
+                        </div>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="afterVegetal1" class="top-option flavor-option-1-after">
+                            <label for="afterVegetal1">植蔬味</label>
+                        </div>
+                    </div>
+                    
+                    <div class="flavor-row top-level-option compact-row">
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="afterSweet1" class="top-option flavor-option-1-after">
+                            <label for="afterSweet1">甜味</label>
+                        </div>
+                        <span>(</span>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="afterSweetVanilla1" class="flavor-option-1-after sub-option" data-parent="afterSweet1">
+                            <label for="afterSweetVanilla1">香草I香兰素</label>
+                        </div>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="afterSweetBrownSugar1" class="flavor-option-1-after sub-option" data-parent="afterSweet1">
+                            <label for="afterSweetBrownSugar1">黄糖</label>
+                        </div>
+                        <span>)</span>
+                    </div>
+                    
+                    <div class="flavor-row top-level-option compact-row">
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="afterOther1" class="top-option flavor-option-1-after">
+                            <label for="afterOther1">其他味道</label>
+                        </div>
+                        <span>(</span>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="afterChem1" class="flavor-option-1-after sub-option" data-parent="afterOther1">
+                            <label for="afterChem1">化学味道</label>
+                        </div>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="afterMoldy1" class="flavor-option-1-after sub-option" data-parent="afterOther1">
+                            <label for="afterMoldy1">霉味</label>
+                        </div>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="afterEarthy1" class="flavor-option-1-after sub-option" data-parent="afterOther1">
+                            <label for="afterEarthy1">泥土味道</label>
+                        </div>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="afterPapery1" class="flavor-option-1-after sub-option" data-parent="afterOther1">
+                            <label for="afterPapery1">纸张味道</label>
+                        </div>
+                        <span>)</span>
+                    </div>
+                </div>
+                
+                <div class="flavor-label">主要味道</div>
+                <div class="flavor-row compact-row">
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="salty1">
+                        <label for="salty1">咸味</label>
+                    </div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="bitter1">
+                        <label for="bitter1">苦味</label>
+                    </div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="acidic1">
+                        <label for="acidic1">酸味</label>
+                    </div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="umami1">
+                        <label for="umami1">鲜味</label>
+                    </div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="sweetMain1">
+                        <label for="sweetMain1">甜味</label>
+                    </div>
+                </div>
+                
+                <div class="slider-container compact-section">
+                    <div class="slider-header">
+                        <span class="slider-title">酸质（强度）</span>
+                        <span class="score-display" id="acidityScore1">5</span>
+                    </div>
+                    <div class="slider-wrapper">
+                        <input type="range" min="0" max="10" value="5" class="custom-slider" id="acidity1">
+                    </div>
+                    <div class="slider-labels">
+                        <span>弱</span>
+                        <span>中等</span>
+                        <span>强</span>
+                    </div>
+                </div>
+                
+                <div class="flavor-label">以下选择一项</div>
+                <div class="flavor-row compact-row">
+                    <div class="checkbox-container">
+                        <input type="radio" name="acidityType1" id="dryAcidity1">
+                        <label for="dryAcidity1">干涩酸质(草本,草味,酸涩)</label>
+                    </div>
+                    <div class="checkbox-container">
+                        <input type="radio" name="acidityType1" id="sweetAcidity1">
+                        <label for="sweetAcidity1">甜感酸质(多汁，水果调,明亮)</label>
+                    </div>
+                </div>
+                
+                <div class="slider-container compact-section">
+                    <div class="slider-header">
+                        <span class="slider-title">甜感（强度）</span>
+                        <span class="score-display" id="sweetnessScore1">5</span>
+                    </div>
+                    <div class="slider-wrapper">
+                        <input type="range" min="0" max="10" value="5" class="custom-slider" id="sweetness1">
+                    </div>
+                    <div class="slider-labels">
+                        <span>弱</span>
+                        <span>中等</span>
+                        <span>强</span>
+                    </div>
+                </div>
+                
+                <div class="slider-container compact-section">
+                    <div class="slider-header">
+                        <span class="slider-title">口感（强度）</span>
+                        <span class="score-display" id="mouthfeelScore1">5</span>
+                    </div>
+                    <div class="slider-wrapper">
+                        <input type="range" min="0" max="10" value="5" class="custom-slider" id="mouthfeel1">
+                    </div>
+                    <div class="slider-labels">
+                        <span>弱</span>
+                        <span>中等</span>
+                        <span>强</span>
+                    </div>
+                </div>
+                
+                <div class="flavor-label">以下最多选择两项</div>
+                <div class="flavor-row compact-row">
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="oily1" class="mouthfeel-option-1">
+                        <label for="oily1">油</label>
+                    </div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="astringent1" class="mouthfeel-option-1">
+                        <label for="astringent1">涩嘴感</label>
+                    </div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="rough1" class="mouthfeel-option-1">
+                        <label for="rough1">粗糙感(沙砾感、粉末感、沙感)</label>
+                    </div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="smooth1" class="mouthfeel-option-1">
+                        <label for="smooth1">顺滑（丝绒感、丝绸般，糖浆般）</label>
+                    </div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="metallic1" class="mouthfeel-option-1">
+                        <label for="metallic1">金属感</label>
+                    </div>
+                </div>
+                
+                <div class="slider-container compact-section">
+                    <div class="slider-header">
+                        <span class="slider-title">干净度（强度）</span>
+                        <span class="score-display" id="cleanlinessScore1">5</span>
+                    </div>
+                    <div class="slider-wrapper">
+                        <input type="range" min="0" max="10" value="5" class="custom-slider" id="cleanliness1">
+                    </div>
+                    <div class="slider-labels">
+                        <span>弱</span>
+                        <span>中等</span>
+                        <span>强</span>
+                    </div>
+                </div>
+                
+                <div class="slider-container compact-section">
+                    <div class="slider-header">
+                        <span class="slider-title">平衡性（强度）</span>
+                        <span class="score-display" id="balanceScore1">5</span>
+                    </div>
+                    <div class="slider-wrapper">
+                        <input type="range" min="0" max="10" value="5" class="custom-slider" id="balance1">
+                    </div>
+                    <div class="slider-labels">
+                        <span>弱</span>
+                        <span>中等</span>
+                        <span>强</span>
+                    </div>
+                </div>
+                
+                <div class="slider-container compact-section">
+                    <div class="slider-header">
+                        <span class="slider-title">一致性（强度）</span>
+                        <span class="score-display" id="uniformityScore1">5</span>
+                    </div>
+                    <div class="slider-wrapper">
+                        <input type="range" min="0" max="10" value="5" class="custom-slider" id="uniformity1">
+                    </div>
+                    <div class="slider-labels">
+                        <span>弱</span>
+                        <span>中等</span>
+                        <span>强</span>
+                    </div>
+                </div>
+                
+                <div class="slider-container compact-section">
+                    <div class="slider-header">
+                        <span class="slider-title">缺陷项（扣分）</span>
+                        <span class="score-display" id="defectsScore1">0</span>
+                    </div>
+                    <div class="slider-wrapper">
+                        <input type="range" min="0" max="5" value="0" class="custom-slider defect-slider" id="defects1">
+                    </div>
+                    <div class="slider-labels">
+                        <span>-10分</span>
+                        <span>-8分</span>
+                        <span>-6分</span>
+                        <span>-4分</span>
+                        <span>-2分</span>
+                        <span>0分</span>
+                    </div>
+                </div>
+                
+                <!-- 咖啡口味总结 -->
+                <div class="coffee-summary">
+                    <!-- 总分显示在图表区域右上角 -->
+                    <div class="total-display">
+                        <span id="totalValue1">50</span>
+                        <div class="total-label">总分</div>
+                    </div>
+                    
+                    <div class="chart-header">
+                        <div class="chart-title">咖啡风味特征分布图</div>
+                    </div>
+                    
+                    <div class="chart-summary-container">
+                        <div class="chart-wrapper">
+                            <div class="chart-container">
+                                <canvas id="coffeeChart1"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="cupping-conclusion">
+                        <div class="summary-title">杯测结论 <span class="sample-number-badge">样品 #1</span></div>
+                        <div id="qualityIndicator1" class="quality-indicator excellent">卓越品质</div>
+                        <div class="summary-text" id="summaryText1">
+                            系统将根据您的评分和选择自动生成咖啡豆总结...
+                        </div>
+                    </div>
+                    
+                    <!-- 杯测评价 -->
+                    <div class="evaluation-box">
+                        <label for="cuppingNotes1">杯测评价（选填）:</label>
+                        <textarea id="cuppingNotes1" placeholder="请输入您的杯测评价..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="btn btn-primary" id="addSample">
+                <i class="fas fa-plus-circle"></i> 添加样品
+            </button>
+            <button class="btn btn-primary" id="exportPdf">
+                <i class="fas fa-file-pdf"></i> 导出PDF
+            </button>
+        </div>
+        
+        <div id="toast" class="toast"></div>
+    </div>
+
+    <script>
+        // 当前显示的样品数量
+        let sampleCount = 1;
+        const maxSamples = 5;
+        
+        // 图表实例数组
+        let coffeeCharts = [];
+        
+        // 显示提示信息
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 更新滑块分数显示
+        function updateScore(sliderId, displayId, sampleId) {
+            const slider = document.getElementById(sliderId);
+            const display = document.getElementById(displayId);
+            if (slider && display) {
+                display.textContent = slider.value;
+            }
+            updateTotalScore(sampleId);
+            updateSummary(sampleId);
+            generateSummary(sampleId);
+        }
+        
+        // 更新缺陷分数显示
+        function updateDefectScore(sliderId, displayId, sampleId) {
+            const slider = document.getElementById(sliderId);
+            const display = document.getElementById(displayId);
+            if (slider && display) {
+                const value = slider.value * 2;
+                display.textContent = value;
+            }
+            updateTotalScore(sampleId);
+            updateSummary(sampleId);
+            generateSummary(sampleId);
+        }
+        
+        // 更新总分
+        function updateTotalScore(sampleId) {
+            // 计算评分滑块的值
+            const scoreSliders = [
+                'dryAroma', 'wetAroma', 'flavor', 'aftertaste', 'acidity', 
+                'sweetness', 'mouthfeel', 'cleanliness', 'balance', 'uniformity'
+            ];
+            
+            let total = 0;
+            for (const slider of scoreSliders) {
+                const sliderEl = document.getElementById(slider + sampleId);
+                if (sliderEl) {
+                    total += parseInt(sliderEl.value) || 0;
+                }
+            }
+            
+            // 减去缺陷扣分
+            const defects = document.getElementById('defects' + sampleId);
+            if (defects) {
+                const defectPoints = parseInt(defects.value) * 2;
+                total -= defectPoints;
+            }
+            
+            // 确保总分不为负数
+            total = Math.max(0, total);
+            
+            // 确保总分不超过100分
+            total = Math.min(total, 100);
+            
+            // 更新当前样品的总分显示
+            document.getElementById('totalValue' + sampleId).textContent = total;
+            return total;
+        }
+        
+        // 添加新样品 - 修复漏洞
+        function addSample() {
+            if (sampleCount >= maxSamples) {
+                showToast(`最多只能添加 ${maxSamples} 个样品`);
+                return;
+            }
+            
+            sampleCount++;
+            const newSample = document.getElementById('sample-1').cloneNode(true);
+            newSample.id = 'sample-' + sampleCount;
+            
+            // 使用更精确的ID替换方法
+            const regex = new RegExp('1', 'g');
+            const newContent = newSample.innerHTML.replace(regex, sampleCount);
+            newSample.innerHTML = newContent;
+            
+            // 更新样品编号显示
+            newSample.querySelector('.sample-id-display').textContent = '样品 #' + sampleCount;
+            newSample.querySelector('.sample-number-badge').textContent = '样品 #' + sampleCount;
+            
+            // 重置表单值
+            const inputs = newSample.querySelectorAll('input');
+            inputs.forEach(input => {
+                if (input.type === 'text' || input.type === 'date') {
+                    input.value = '';
+                } else if (input.type === 'checkbox' || input.type === 'radio') {
+                    input.checked = false;
+                } else if (input.type === 'range') {
+                    // 修复漏洞：确保滑块的最大值正确设置
+                    if (input.id.includes('defects')) {
+                        input.min = 0;
+                        input.max = 5;
+                        input.value = 0;
+                    } else {
+                        input.min = 0;
+                        input.max = 10;
+                        input.value = 5;
+                    }
+                }
+            });
+            
+            // 设置日期为今天
+            const today = new Date().toISOString().split('T')[0];
+            newSample.querySelector('input[type="date"]').value = today;
+            
+            // 重置总结文本
+            newSample.querySelector('.summary-text').textContent = '系统将根据您的评分和选择自动生成咖啡豆总结...';
+            
+            // 添加删除按钮事件
+            const deleteBtn = newSample.querySelector('.delete-sample-btn');
+            deleteBtn.setAttribute('data-sample', sampleCount);
+            
+            // 添加到容器
+            document.getElementById('samplesContainer').appendChild(newSample);
+            
+            // 更新总分
+            updateTotalScore(sampleCount);
+            
+            // 重新绑定事件
+            setupEventListeners(sampleCount);
+            
+            // 初始化子选项状态
+            initSubOptions(sampleCount);
+            
+            // 延迟更新图表和总结
+            setTimeout(() => {
+                updateSummary(sampleCount);
+                generateSummary(sampleCount);
+            }, 100);
+            
+            // 滚动到新添加的样品
+            newSample.scrollIntoView({ behavior: 'smooth' });
+            
+            showToast(`已添加样品 #${sampleCount}`);
+        }
+        
+        // 删除样品
+        function deleteSample(id) {
+            if (sampleCount <= 1) {
+                showToast('不能删除最后一个样品');
+                return;
+            }
+            
+            const sample = document.getElementById('sample-' + id);
+            if (!sample) return;
+            
+            // 销毁图表
+            if (coffeeCharts[id]) {
+                coffeeCharts[id].destroy();
+                delete coffeeCharts[id];
+            }
+            
+            // 移除样品
+            sample.parentNode.removeChild(sample);
+            sampleCount--;
+            
+            // 重新编号剩余的样品
+            const samples = document.querySelectorAll('.sample-card');
+            samples.forEach((sample, index) => {
+                const newId = index + 1;
+                sample.id = 'sample-' + newId;
+                
+                // 更新内部ID
+                const elements = sample.querySelectorAll('[id]');
+                elements.forEach(el => {
+                    el.id = el.id.replace(/\d+$/, newId);
+                });
+                
+                // 更新内部内容
+                const contentElements = sample.querySelectorAll('[for], [data-parent], [data-sample], .score-display, .sample-id-display, .sample-number-badge');
+                contentElements.forEach(el => {
+                    if (el.hasAttribute('for')) {
+                        const forValue = el.getAttribute('for');
+                        el.setAttribute('for', forValue.replace(/\d+$/, newId));
+                    }
+                    if (el.hasAttribute('data-parent')) {
+                        const dataParent = el.getAttribute('data-parent');
+                        el.setAttribute('data-parent', dataParent.replace(/\d+$/, newId));
+                    }
+                    if (el.hasAttribute('data-sample')) {
+                        el.setAttribute('data-sample', newId);
+                    }
+                    if (el.classList.contains('sample-id-display') || el.classList.contains('sample-number-badge')) {
+                        el.textContent = el.textContent.replace(/\d+$/, newId);
+                    }
+                });
+                
+                // 更新样品编号显示
+                sample.querySelector('.sample-id-display').textContent = '样品 #' + newId;
+                sample.querySelector('.sample-number-badge').textContent = '样品 #' + newId;
+                
+                // 重新绑定事件
+                setupEventListeners(newId);
+                
+                // 更新总分和图表
+                updateTotalScore(newId);
+                updateSummary(newId);
+                generateSummary(newId);
+            });
+            
+            showToast(`已删除样品 #${id}`);
+        }
+        
+        // 限制选择数量
+        function limitSelection(section, max, sampleId) {
+            const checkboxes = section.querySelectorAll('input[type="checkbox"].top-option');
+            
+            let checkedCount = 0;
+            checkboxes.forEach(function(checkbox) {
+                if (checkbox.checked) checkedCount++;
+            });
+            
+            if (checkedCount > max) {
+                event.target.checked = false;
+                showToast(`该部分最多只能选择 ${max} 项`);
+            }
+            
+            updateSummary(sampleId);
+            generateSummary(sampleId);
+        }
+        
+        // 更新咖啡风味特征分布图 - 修复干香失效问题
+        function updateSummary(sampleId) {
+            // 获取各项评分
+            const dryAroma = parseInt(document.getElementById('dryAroma' + sampleId).value);
+            const wetAroma = parseInt(document.getElementById('wetAroma' + sampleId).value);
+            const flavor = parseInt(document.getElementById('flavor' + sampleId).value);
+            const aftertaste = parseInt(document.getElementById('aftertaste' + sampleId).value);
+            const acidity = parseInt(document.getElementById('acidity' + sampleId).value);
+            const sweetness = parseInt(document.getElementById('sweetness' + sampleId).value);
+            const mouthfeel = parseInt(document.getElementById('mouthfeel' + sampleId).value);
+            const cleanliness = parseInt(document.getElementById('cleanliness' + sampleId).value);
+            const balance = parseInt(document.getElementById('balance' + sampleId).value);
+            const uniformity = parseInt(document.getElementById('uniformity' + sampleId).value);
+            
+            // 创建或更新图表 - 修复属性名拼写错误
+            createOrUpdateChart(sampleId, {
+                dryAroma: dryAroma, // 修正拼写错误
+                wetAroma: wetAroma, 
+                flavor: flavor, 
+                aftertaste: aftertaste, 
+                acidity: acidity, 
+                sweetness: sweetness, 
+                mouthfeel: mouthfeel, 
+                cleanliness: cleanliness, 
+                balance: balance, 
+                uniformity: uniformity
+            });
+        }
+        
+        // 创建或更新图表
+        function createOrUpdateChart(sampleId, scores) {
+            const canvasId = 'coffeeChart' + sampleId;
+            const ctx = document.getElementById(canvasId);
+            
+            // 如果图表已存在，销毁它
+            if (coffeeCharts[sampleId]) {
+                coffeeCharts[sampleId].destroy();
+            }
+            
+            // 创建风味特征雷达图
+            coffeeCharts[sampleId] = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['干香', '湿香', '风味', '余韵', '酸质', '甜感', '口感', '干净度', '平衡性', '一致性'],
+                    datasets: [{
+                        label: '风味强度',
+                        data: [
+                            scores.dryAroma, 
+                            scores.wetAroma, 
+                            scores.flavor, 
+                            scores.aftertaste, 
+                            scores.acidity, 
+                            scores.sweetness, 
+                            scores.mouthfeel, 
+                            scores.cleanliness, 
+                            scores.balance, 
+                            scores.uniformity
+                        ],
+                        backgroundColor: 'rgba(139, 90, 43, 0.2)',
+                        borderColor: 'rgba(139, 90, 43, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(139, 90, 43, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(139, 90, 43, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            min: 0,
+                            max: 10,
+                            ticks: {
+                                stepSize: 2
+                            },
+                            angleLines: {
+                                display: true,
+                                color: 'rgba(139, 90, 43, 0.1)'
+                            },
+                            grid: {
+                                color: 'rgba(139, 90, 43, 0.1)'
+                            },
+                            pointLabels: {
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                },
+                                color: '#5d412d'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                },
+                                color: '#5d412d'
+                            }
+                        },
+                        title: {
+                            display: false
+                        }
+                    }
+                }
+            });
+            
+            // 修复图表渲染问题
+            setTimeout(() => {
+                if (coffeeCharts[sampleId]) {
+                    coffeeCharts[sampleId].update();
+                }
+            }, 100);
+        }
+        
+        // 自动生成咖啡豆总结
+        function generateSummary(sampleId) {
+            // 获取各项评分
+            const dryAroma = parseInt(document.getElementById('dryAroma' + sampleId).value);
+            const wetAroma = parseInt(document.getElementById('wetAroma' + sampleId).value);
+            const flavor = parseInt(document.getElementById('flavor' + sampleId).value);
+            const aftertaste = parseInt(document.getElementById('aftertaste' + sampleId).value);
+            const acidity = parseInt(document.getElementById('acidity' + sampleId).value);
+            const sweetness = parseInt(document.getElementById('sweetness' + sampleId).value);
+            const mouthfeel = parseInt(document.getElementById('mouthfeel' + sampleId).value);
+            const cleanliness = parseInt(document.getElementById('cleanliness' + sampleId).value);
+            const balance = parseInt(document.getElementById('balance' + sampleId).value);
+            const uniformity = parseInt(document.getElementById('uniformity' + sampleId).value);
+            const defects = parseInt(document.getElementById('defects' + sampleId).value) * 2;
+            const total = updateTotalScore(sampleId);
+            
+            // 更新质量指示器
+            const qualityIndicator = document.getElementById('qualityIndicator' + sampleId);
+            if (qualityIndicator) {
+                qualityIndicator.className = 'quality-indicator ';
+                
+                if (total >= 90) {
+                    qualityIndicator.classList.add('excellent');
+                    qualityIndicator.textContent = '卓越品质 (90-100分)';
+                } else if (total >= 85) {
+                    qualityIndicator.classList.add('good');
+                    qualityIndicator.textContent = '非常优秀 (85-89分)';
+                } else if (total >= 80) {
+                    qualityIndicator.classList.add('good');
+                    qualityIndicator.textContent = '优质 (80-84分)';
+                } else if (total >= 75) {
+                    qualityIndicator.classList.add('average');
+                    qualityIndicator.textContent = '良好 (75-79分)';
+                } else if (total >= 70) {
+                    qualityIndicator.classList.add('poor');
+                    qualityIndicator.textContent = '普通 (70-74分)';
+                } else {
+                    qualityIndicator.classList.add('bad');
+                    qualityIndicator.textContent = '品质较差 (70分以下)';
+                }
+            }
+            
+            // 获取主要风味
+            let mainFlavors = [];
+            if (document.getElementById('floral' + sampleId).checked) mainFlavors.push('花香');
+            if (document.getElementById('roasty' + sampleId).checked) mainFlavors.push('烘焙味');
+            if (document.getElementById('fruity' + sampleId).checked) mainFlavors.push('果味');
+            if (document.getElementById('nutty' + sampleId).checked) mainFlavors.push('坚果类|可可');
+            if (document.getElementById('sour' + sampleId).checked) mainFlavors.push('酸味|发酵味');
+            if (document.getElementById('spicy' + sampleId).checked) mainFlavors.push('香料味');
+            if (document.getElementById('vegetal' + sampleId).checked) mainFlavors.push('植蔬味');
+            if (document.getElementById('sweet' + sampleId).checked) mainFlavors.push('甜味');
+            if (document.getElementById('other' + sampleId).checked) mainFlavors.push('其他味道');
+            
+            // 获取主要味道
+            let mainTastes = [];
+            if (document.getElementById('salty' + sampleId).checked) mainTastes.push('咸味');
+            if (document.getElementById('bitter' + sampleId).checked) mainTastes.push('苦味');
+            if (document.getElementById('acidic' + sampleId).checked) mainTastes.push('酸味');
+            if (document.getElementById('umami' + sampleId).checked) mainTastes.push('鲜味');
+            if (document.getElementById('sweetMain' + sampleId).checked) mainTastes.push('甜味');
+            
+            // 获取酸质类型
+            let acidityType = '';
+            if (document.getElementById('dryAcidity' + sampleId).checked) acidityType = '干涩酸质';
+            if (document.getElementById('sweetAcidity' + sampleId).checked) acidityType = '甜感酸质';
+            
+            // 构建总结内容
+            let summary = '';
+            
+            // 根据SCAA标准生成专业总结
+            if (total >= 90) {
+                summary += "卓越品质的咖啡，具有完美的风味平衡和复杂性。";
+            } else if (total >= 85) {
+                summary += "非常优秀的咖啡，风味特征突出且平衡。";
+            } else if (total >= 80) {
+                summary += "优质的咖啡，具有令人愉悦的风味和良好的平衡性。";
+            } else if (total >= 75) {
+                summary += "良好的咖啡，风味尚可但缺乏复杂性。";
+            } else if (total >= 70) {
+                summary += "普通的咖啡，存在一些明显缺陷。";
+            } else {
+                summary += "品质较差的咖啡，存在多个明显缺陷。";
+            }
+            
+            summary += "\n\n";
+            
+            // 添加风味描述
+            if (mainFlavors.length > 0) {
+                summary += `主要风味特征: ${mainFlavors.join('、')}。`;
+            }
+            
+            if (mainTastes.length > 0) {
+                summary += `主要味觉感受: ${mainTastes.join('、')}。`;
+            }
+            
+            if (acidityType) {
+                summary += `酸质类型: ${acidityType}。`;
+            }
+            
+            summary += "\n";
+            
+            // 添加专业评价
+            if (flavor >= 8) {
+                summary += "风味强度高，层次丰富且清晰。";
+            } else if (flavor >= 6) {
+                summary += "风味表现良好，有明确的特征。";
+            } else {
+                summary += "风味表现平淡，缺乏辨识度。";
+            }
+            
+            if (aftertaste >= 8) {
+                summary += "余韵持久且令人愉悦。";
+            } else if (aftertaste >= 6) {
+                summary += "余韵适中，持续时间合理。";
+            } else {
+                summary += "余韵短暂，缺乏持久性。";
+            }
+            
+            if (cleanliness >= 8) {
+                summary += "干净度极佳，无任何不良风味。";
+            } else if (cleanliness >= 6) {
+                summary += "干净度良好，无明显缺陷。";
+            } else {
+                summary += "干净度不足，存在杂味。";
+            }
+            
+            // 更新总结文本
+            document.getElementById('summaryText' + sampleId).textContent = summary;
+        }
+        
+        // 初始化子选项状态
+        function initSubOptions(sampleId) {
+            const subOptions = document.querySelectorAll('#sample-' + sampleId + ' .sub-option');
+            subOptions.forEach(option => {
+                const parentId = option.getAttribute('data-parent') + sampleId;
+                const parent = document.getElementById(parentId);
+                
+                if (!parent.checked) {
+                    option.disabled = true;
+                    option.parentElement.classList.add('disabled-option');
+                }
+            });
+        }
+        
+        // 处理顶级选项变化
+        function handleTopOptionChange(option, sampleId) {
+            const parentId = option.id;
+            const subOptions = document.querySelectorAll(`#sample-${sampleId} .sub-option[data-parent="${parentId}"]`);
+            
+            subOptions.forEach(subOption => {
+                if (option.checked) {
+                    subOption.disabled = false;
+                    subOption.parentElement.classList.remove('disabled-option');
+                } else {
+                    subOption.checked = false;
+                    subOption.disabled = true;
+                    subOption.parentElement.classList.add('disabled-option');
+                }
+            });
+            
+            generateSummary(sampleId);
+        }
+        
+        // 为特定样品设置事件监听器
+        function setupEventListeners(sampleId) {
+            // 滑块事件
+            const sliders = [
+                'dryAroma', 'wetAroma', 'flavor', 'aftertaste', 'acidity', 
+                'sweetness', 'mouthfeel', 'cleanliness', 'balance', 'uniformity'
+            ];
+            
+            for (const slider of sliders) {
+                const sliderEl = document.getElementById(slider + sampleId);
+                if (sliderEl) {
+                    sliderEl.addEventListener('input', function() {
+                        updateScore(slider + sampleId, slider + 'Score' + sampleId, sampleId);
+                    });
+                }
+            }
+            
+            // 缺陷滑块
+            const defectsSlider = document.getElementById('defects' + sampleId);
+            if (defectsSlider) {
+                defectsSlider.addEventListener('input', function() {
+                    updateDefectScore('defects' + sampleId, 'defectsScore' + sampleId, sampleId);
+                });
+            }
+            
+            // 风味选项限制
+            const flavorSections = [
+                {selector: '.flavor-section-' + sampleId, max: 5},
+                {selector: '.flavor-section-' + sampleId + '-after', max: 5},
+            ];
+            
+            flavorSections.forEach(section => {
+                const sectionEl = document.querySelector(`#sample-${sampleId} ` + section.selector);
+                if (sectionEl) {
+                    const checkboxes = sectionEl.querySelectorAll('input[type="checkbox"].top-option');
+                    checkboxes.forEach(checkbox => {
+                        checkbox.addEventListener('change', function() {
+                            limitSelection(sectionEl, section.max, sampleId);
+                            handleTopOptionChange(this, sampleId);
+                        });
+                    });
+                }
+            });
+            
+            // 口感选项限制（最多两项）
+            const mouthfeelSection = document.querySelector(`#sample-${sampleId} .mouthfeel-option-${sampleId}`);
+            if (mouthfeelSection) {
+                const mouthfeelOptions = document.querySelectorAll(`#sample-${sampleId} .mouthfeel-option-${sampleId}`);
+                mouthfeelOptions.forEach(option => {
+                    option.addEventListener('change', function() {
+                        const checkedOptions = document.querySelectorAll(`#sample-${sampleId} .mouthfeel-option-${sampleId}:checked`);
+                        if (checkedOptions.length > 2) {
+                            this.checked = false;
+                            showToast('口感部分最多只能选择两项');
+                        }
+                        generateSummary(sampleId);
+                    });
+                });
+            }
+            
+            // 主要味道
+            const tasteCheckboxes = document.querySelectorAll(`#sample-${sampleId} #salty${sampleId}, #bitter${sampleId}, #acidic${sampleId}, #umami${sampleId}, #sweetMain${sampleId}`);
+            tasteCheckboxes.forEach(function(checkbox) {
+                checkbox.addEventListener('change', function() {
+                    generateSummary(sampleId);
+                });
+            });
+            
+            // 酸质类型
+            const acidityRadios = document.querySelectorAll(`#sample-${sampleId} input[name="acidityType${sampleId}"]`);
+            acidityRadios.forEach(function(radio) {
+                radio.addEventListener('change', function() {
+                    generateSummary(sampleId);
+                });
+            });
+            
+            // 子选项
+            const subOptions = document.querySelectorAll(`#sample-${sampleId} .sub-option`);
+            subOptions.forEach(option => {
+                option.addEventListener('change', function() {
+                    generateSummary(sampleId);
+                });
+            });
+        }
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            // 设置默认日期为今天
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('testDate1').value = today;
+            
+            // 添加事件监听器
+            document.getElementById('addSample').addEventListener('click', addSample);
+            
+            document.getElementById('exportPdf').addEventListener('click', function() {
+                showToast('PDF导出功能已触发！实际应用中这里会生成PDF文件。');
+            });
+            
+            // 删除按钮事件委托
+            document.getElementById('samplesContainer').addEventListener('click', function(e) {
+                if (e.target.classList.contains('delete-sample-btn')) {
+                    const sampleId = e.target.getAttribute('data-sample');
+                    deleteSample(sampleId);
+                }
+            });
+            
+            // 为样品1设置事件监听器
+            setupEventListeners(1);
+            
+            // 初始化总分和总结
+            updateTotalScore(1);
+            updateSummary(1);
+            generateSummary(1);
+            
+            // 初始化子选项状态
+            initSubOptions(1);
+        });
+    </script>
+</body>
+</html>
